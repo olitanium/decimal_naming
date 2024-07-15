@@ -24,16 +24,7 @@ const UNIT_TEENS: [&str; 20] = [
 /// Convert a number from 0-99 to a String
 fn tens(input: usize) -> Result<String, ()> {
     const TENS: [&str; 10] = [
-        "",
-        "",
-        "twenty",
-        "thirty",
-        "forty",
-        "fifty",
-        "sixty",
-        "seventy",
-        "eighty",
-        "ninety",
+        "", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety",
     ];
 
     // Check not greater than 99.
@@ -50,7 +41,7 @@ fn tens(input: usize) -> Result<String, ()> {
             } else {
                 Ok(format!("{} {}", TENS[tens], UNIT_TEENS[units]))
             }
-        },
+        }
         unit_teens @ 0..=19 => Ok(UNIT_TEENS[unit_teens].into()),
     }
 }
@@ -68,7 +59,7 @@ fn hundreds(input: usize) -> Result<String, ()> {
             } else {
                 format!("{} and {}", hundreds_str, tens(small)?)
             })
-        },
+        }
         small @ 0..=99 => tens(small),
     }
 }
@@ -102,7 +93,16 @@ fn name_number(mut input: usize) -> String {
     });
 
     std::iter::zip(thousands, MAGNITUDE)
-        .filter_map(|(value, label)| if value != 0 {Some(format!("{} {label}", hundreds(value).expect("Given number less than 1000")))} else {None})
+        .filter_map(|(value, label)| {
+            if value != 0 {
+                Some(format!(
+                    "{} {label}",
+                    hundreds(value).expect("Given number less than 1000")
+                ))
+            } else {
+                None
+            }
+        })
         .collect::<Vec<_>>()
         .into_iter()
         .rev()
@@ -110,16 +110,13 @@ fn name_number(mut input: usize) -> String {
         .join(", ")
         .trim_end()
         .to_string()
-    
 }
 
-
 fn main() -> Result<(), &'static str> {
-    let num: usize = std::env::args().nth(1)
-        .map_or_else(
-            || text_io::try_read!("{}").map_err(|_| "Failed_to read from stdin"),
-            |x| x.parse().map_err(|_| "Please use a correct number format")
-        )?;
+    let num: usize = std::env::args().nth(1).map_or_else(
+        || text_io::try_read!("{}").map_err(|_| "Failed_to read from stdin"),
+        |x| x.parse().map_err(|_| "Please use a correct number format"),
+    )?;
 
     println!("{}", name_number(num));
 
